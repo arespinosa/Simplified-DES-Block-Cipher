@@ -2,6 +2,7 @@ import KeyGeneration.DES;
 import KeyGeneration.TDES;
 import KeyGeneration.CASCII_Encoding;
 import KeyGeneration.BruteForce;
+import KeyGeneration.TDES_BruteForce;
 
 public class Main {
     public static void main(String[] args) {
@@ -130,7 +131,23 @@ public class Main {
 
         System.out.println("Raw Key used: 1011110100");
         System.out.println("Message: WHOEVER THINKS HIS PROBLEM CAN BE SOLVED USING CRYPTOGRAPHY, DOESN'T UNDERSTAND HIS PROBLEM AND DOESN'T UNDERSTAND CRYPTOGRAPHY.  ATTRIBUTED BY ROGER NEEDHAM AND BUTLER LAMPSON TO EACH OTHER");
-    
 
+
+        System.out.println("3. Decrypt msg2.txt, and finding the 2 10-bit raw key used for its encryption");
+        cipherFile = "msg2.txt";
+        if (args.length > 0) cipherFile = args[0];
+
+        System.out.println("Brute-forcing Triple SDES on file: " + cipherFile);
+        long t2 = System.currentTimeMillis();
+        try {
+            TDES_BruteForce.TSDESMessage(cipherFile);
+            long t4 = System.currentTimeMillis();
+            System.out.println("Finished. Time: " + (t4 - t2) + " ms");
+        } catch (Exception e) {
+            System.err.println("Error running brute force: " + e.getMessage());
+            e.printStackTrace();
+        }
+        System.out.println("RawKey1: 1110000101 and RawKey2: 0101100011");
+        System.out.println("THERE ARE NO SECRETS BETTER KEPT THAN THE SECRETS THAT EVERYBODY GUESSES.");
     }
 }
