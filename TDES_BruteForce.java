@@ -40,7 +40,6 @@ public class TDES_BruteForce {
 
 
     public static void TSDESMessage(String ciphertext) throws IOException {
-        // Read file and collapse whitespace/newlines to a single bitstring
         String cipherBits = new String(Files.readAllBytes(Paths.get(ciphertext)));
         if (cipherBits.length() == 0) {
             throw new IllegalArgumentException("Ciphertext file empty");
@@ -60,10 +59,10 @@ public class TDES_BruteForce {
             String rawKey1 = String.format("%10s", Integer.toBinaryString(i)).replace(' ', '0');
             for(int j = 0; j < 1024; j++){
                 String rawKey2 = String.format("%10s", Integer.toBinaryString(j)).replace(' ', '0');
-                // decrypt whole message block-by-block
+                // decrypt message by 8 bit bloks 
                 StringBuilder decryptedBits = new StringBuilder(cipherBits.length());
-                for (int pos = 0; pos + 8 <= cipherBits.length(); pos += 8) {
-                    String bitBlock = cipherBits.substring(pos, pos + 8);
+                for (int k = 0; k + 8 <= cipherBits.length(); k += 8) {
+                    String bitBlock = cipherBits.substring(k, k + 8);
                     String plainBlock = TripleDES.Decrypt(bitBlock, rawKey1, rawKey2);
                     decryptedBits.append(plainBlock);
                 }
@@ -79,19 +78,18 @@ public class TDES_BruteForce {
                   plaintext = "<invalid-cascii>";
                 }
                 
-                // preview (trim to keep file reasonable)
                 int previewLen = 200;
                 String preview = plaintext.length() <= previewLen ? plaintext : plaintext.substring(0, previewLen);
-                // sanitize
                 String safePreview = preview.replace("\t", " ").replace("\r", " ").replace("\n", " ");
-                // write all attempts
                 allWriter.write("rawKey: 1 " +  rawKey1 + "\t" + "rawKey: 2 " + rawKey2 + "\t" + "Decrypted Message" + safePreview + "\n");
 
-                // check uppercase keywords in plaintext
                 String upPlain = plaintext.toUpperCase();
                 boolean matched = false;
-                for (String kw : commonWords) {
-                    if (upPlain.contains(kw)) { matched = true; break; }
+                for (String cw : commonWords) {
+                    if (upPlain.contains(cw)) { 
+                        matched = true; 
+                        break; 
+                    }
                 }
                 
                 if (matched) {

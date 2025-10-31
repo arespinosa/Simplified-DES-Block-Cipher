@@ -39,7 +39,6 @@ public class BruteForce {
 
 
     public static void SDESMessage(String ciphertext) throws IOException {
-        // Read file and collapse whitespace/newlines to a single bitstring
         String cipherBits = new String(Files.readAllBytes(Paths.get(ciphertext)));
         if (cipherBits.length() == 0) {
             throw new IllegalArgumentException("Ciphertext file empty");
@@ -57,12 +56,11 @@ public class BruteForce {
         
         for(int i = 0; i < 1024; i++) {
             String rawKey = String.format("%10s", Integer.toBinaryString(i)).replace(' ', '0');
-              // decrypt whole message block-by-block
+              // decrypt whole message by 8 bit blocks. 
               StringBuilder decryptedBits = new StringBuilder(cipherBits.length());
-              for (int pos = 0; pos + 8 <= cipherBits.length(); pos += 8) {
-                  String bitBlock = cipherBits.substring(pos, pos + 8);
+              for (int j = 0; j + 8 <= cipherBits.length(); j += 8) {
+                  String bitBlock = cipherBits.substring(j, j + 8);
                   String plainBlock = SDES.Decrypt(bitBlock, rawKey);
-
                   decryptedBits.append(plainBlock);
               }
 
@@ -83,11 +81,13 @@ public class BruteForce {
 
               allWriter.write(rawKey + "\t" + safePreview + "\n");
 
-              // check uppercase keywords in plaintext
               String upPlain = plaintext.toUpperCase();
               boolean matched = false;
-              for (String kw : commonWords) {
-                  if (upPlain.contains(kw)) { matched = true; break; }
+              for (String cw : commonWords) {
+                if (upPlain.contains(cw)) { 
+                    matched = true; 
+                    break; 
+                }
               }
 
               if (matched) {
