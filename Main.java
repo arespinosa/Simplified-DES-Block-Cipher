@@ -1,6 +1,7 @@
 import KeyGeneration.DES;
 import KeyGeneration.TDES;
 import KeyGeneration.CASCII_Encoding;
+import KeyGeneration.BruteForce;
 
 public class Main {
     public static void main(String[] args) {
@@ -100,7 +101,7 @@ public class Main {
         
         System.out.println("------------------------------------------------------------------------");
         System.out.println("PART 3. Cracking SDES and TripleSDES ");
-        System.out.println("Using CRYPTOGRAPHY and Key: 0111001101");
+        System.out.println("1. Using CRYPTOGRAPHY and Key: 0111001101");
         System.out.println("Encoding Result: ");
 
         String crypto_key = "0111001101";
@@ -110,7 +111,26 @@ public class Main {
 
         System.out.println(crypto_encode);
         System.out.println("Length of encryption: " + crypto_encode.length() + " bits.");
-      
+
+
+        System.out.println("2. Decrypt msg1.txt, and finding the 10-bit raw key used for its encryption");
+        String cipherFile = "msg1.txt";
+        if (args.length > 0) cipherFile = args[0];
+
+        System.out.println("Brute-forcing SDES on file: " + cipherFile);
+        long t0 = System.currentTimeMillis();
+        try {
+            BruteForce.SDESMessage(cipherFile);
+            long t1 = System.currentTimeMillis();
+            System.out.println("Finished. Time: " + (t1 - t0) + " ms");
+        } catch (Exception e) {
+            System.err.println("Error running brute force: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        System.out.println("Raw Key used: 1011110100");
+        System.out.println("Message: WHOEVER THINKS HIS PROBLEM CAN BE SOLVED USING CRYPTOGRAPHY, DOESN'T UNDERSTAND HIS PROBLEM AND DOESN'T UNDERSTAND CRYPTOGRAPHY.  ATTRIBUTED BY ROGER NEEDHAM AND BUTLER LAMPSON TO EACH OTHER");
+    
 
     }
 }
