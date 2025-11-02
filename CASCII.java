@@ -1,4 +1,3 @@
-package KeyGeneration;
 // CASCII.java
 // A simplified version of ASCII for encryption and decryption needs
 

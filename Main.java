@@ -1,9 +1,4 @@
-import KeyGeneration.DES;
-import KeyGeneration.TDES;
-import KeyGeneration.CASCII_Encoding;
-import KeyGeneration.BruteForce;
-import KeyGeneration.TDES_BruteForce;
-
+import java.util.*;
 public class Main {
     public static void main(String[] args) {
         /* PART 1: SDES */ 
@@ -23,13 +18,13 @@ public class Main {
             String rawKey = test[0];
             String plaintext = test[1];
             String expectedCiphertext = test[2];
-            String actualCiphertext = DES.Encrypt(plaintext, rawKey);
+            String actualCiphertext = SDES.Encrypt(plaintext, rawKey);
             boolean match = actualCiphertext.equals(expectedCiphertext);
             System.out.println(rawKey + "\t" + plaintext + "\t" + expectedCiphertext + "\t\t" 
                                + actualCiphertext + "\t\t" + (match));
         }
 
-        // Now we will move onto the next section which is to get the ciphertext and plaintext 
+        // Getting the cipher text given the plaintext and key 
         String[][] encryptionCases = {
             {"0000000000", "00000000"},
             {"1111111111", "11111111"},
@@ -42,11 +37,11 @@ public class Main {
         for (String[] test : encryptionCases) {
             String rawKey = test[0];
             String plaintext = test[1];
-            String ciphertext = DES.Encrypt(plaintext, rawKey);
+            String ciphertext = SDES.Encrypt(plaintext, rawKey);
             System.out.println(rawKey + "\t" + plaintext + "\t" + ciphertext);
         }
 
-        // Part 2: Decrypt given ciphertexts with given keys
+        // Getting the plain text given the ciphertext and key 
         String[][] decryptionCases = {
             {"1000101110", "00011100"},
             {"1000101110", "11000010"},
@@ -58,7 +53,7 @@ public class Main {
         for (String[] test : decryptionCases) {
             String rawKey = test[0];
             String ciphertext = test[1];
-            String plaintext = DES.Decrypt(ciphertext, rawKey);
+            String plaintext = SDES.Decrypt(ciphertext, rawKey);
             System.out.println(rawKey + "\t" + ciphertext + "\t" + plaintext);
         }
 
@@ -77,11 +72,10 @@ public class Main {
             String rk1 = test[0];
             String rk2 = test[1];
             String pt = test[2];
-            String ct = TDES.Encrypt(pt, rk1, rk2);
+            String ct = TripleDES.Encrypt(pt, rk1, rk2);
             System.out.println(rk1 + "\t" + rk2 + "\t" + pt + "\t\t" + ct);
         }
 
-        // Part 2: Decrypt given ciphertexts with given key pairs
         String[][] tdecryptionCases = {
             {"1000101110", "0110101110", "11100110"},
             {"1011101111", "0110101110", "01010000"},
@@ -95,7 +89,7 @@ public class Main {
             String rk1 = test[0];
             String rk2 = test[1];
             String ct = test[2];
-            String pt = TDES.Decrypt(ct, rk1, rk2);
+            String pt = TripleDES.Decrypt(ct, rk1, rk2);
             System.out.println(rk1 + "\t" + rk2 + "\t" + ct + "\t\t" + pt);
         }
         
@@ -112,6 +106,8 @@ public class Main {
 
         System.out.println(crypto_encode);
         System.out.println("Length of encryption: " + crypto_encode.length() + " bits.");
+        System.out.println();
+        System.out.println();
 
 
         System.out.println("2. Decrypt msg1.txt, and finding the 10-bit raw key used for its encryption");
@@ -119,18 +115,18 @@ public class Main {
         if (args.length > 0) cipherFile = args[0];
 
         System.out.println("Brute-forcing SDES on file: " + cipherFile);
-        long t0 = System.currentTimeMillis();
+        System.out.println("Raw Key used: 1011110100");
+        System.out.println("Message: WHOEVER THINKS HIS PROBLEM CAN BE SOLVED USING CRYPTOGRAPHY, DOESN'T UNDERSTAND HIS PROBLEM AND DOESN'T UNDERSTAND CRYPTOGRAPHY.  ATTRIBUTED BY ROGER NEEDHAM AND BUTLER LAMPSON TO EACH OTHER");
+        System.out.println();
         try {
             BruteForce.SDESMessage(cipherFile);
-            long t1 = System.currentTimeMillis();
-            System.out.println("Finished. Time: " + (t1 - t0) + " ms");
+
         } catch (Exception e) {
             System.err.println("Error running brute force: " + e.getMessage());
             e.printStackTrace();
         }
 
-        System.out.println("Raw Key used: 1011110100");
-        System.out.println("Message: WHOEVER THINKS HIS PROBLEM CAN BE SOLVED USING CRYPTOGRAPHY, DOESN'T UNDERSTAND HIS PROBLEM AND DOESN'T UNDERSTAND CRYPTOGRAPHY.  ATTRIBUTED BY ROGER NEEDHAM AND BUTLER LAMPSON TO EACH OTHER");
+
 
 
         System.out.println("3. Decrypt msg2.txt, and finding the 2 10-bit raw key used for its encryption");
@@ -138,16 +134,14 @@ public class Main {
         if (args.length > 0) cipherFile = args[0];
 
         System.out.println("Brute-forcing Triple SDES on file: " + cipherFile);
-        long t2 = System.currentTimeMillis();
+        System.out.println("RawKey1: 1110000101 and RawKey2: 0101100011");
+        System.out.println("THERE ARE NO SECRETS BETTER KEPT THAN THE SECRETS THAT EVERYBODY GUESSES.");
         try {
             TDES_BruteForce.TSDESMessage(cipherFile);
-            long t4 = System.currentTimeMillis();
-            System.out.println("Finished. Time: " + (t4 - t2) + " ms");
         } catch (Exception e) {
             System.err.println("Error running brute force: " + e.getMessage());
             e.printStackTrace();
         }
-        System.out.println("RawKey1: 1110000101 and RawKey2: 0101100011");
-        System.out.println("THERE ARE NO SECRETS BETTER KEPT THAN THE SECRETS THAT EVERYBODY GUESSES.");
+
     }
 }

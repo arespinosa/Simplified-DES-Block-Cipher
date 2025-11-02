@@ -1,4 +1,3 @@
-package KeyGeneration;
 import java.util.*;
 
 public class CASCII_Encoding{
@@ -22,7 +21,7 @@ public class CASCII_Encoding{
         // Iterating over the amount of blocks and encrypting 8 bits at a time 
         for(int i = 0; i < blockSize; i++) {
             String bitBlock = bitString.substring(j, j+8);
-            String cipherBlock = DES.Encrypt(bitBlock, key);
+            String cipherBlock = SDES.Encrypt(bitBlock, key);
             result += cipherBlock;
             j += 8;
         }

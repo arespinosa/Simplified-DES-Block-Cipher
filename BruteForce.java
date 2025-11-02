@@ -1,4 +1,3 @@
-package KeyGeneration;
 import java.util.*;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -7,8 +6,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 
 
-public class BruteForce{
-
+public class BruteForce {
     private static byte[] convBytes(String bits) {
         byte[] out = new byte[bits.length()];
         for (int i = 0; i < bits.length(); i++) {
@@ -41,7 +39,6 @@ public class BruteForce{
 
 
     public static void SDESMessage(String ciphertext) throws IOException {
-        // Read file and collapse whitespace/newlines to a single bitstring
         String cipherBits = new String(Files.readAllBytes(Paths.get(ciphertext)));
         if (cipherBits.length() == 0) {
             throw new IllegalArgumentException("Ciphertext file empty");
@@ -59,12 +56,11 @@ public class BruteForce{
         
         for(int i = 0; i < 1024; i++) {
             String rawKey = String.format("%10s", Integer.toBinaryString(i)).replace(' ', '0');
-              // decrypt whole message block-by-block
+              // decrypt whole message by 8 bit blocks. 
               StringBuilder decryptedBits = new StringBuilder(cipherBits.length());
-              for (int pos = 0; pos + 8 <= cipherBits.length(); pos += 8) {
-                  String bitBlock = cipherBits.substring(pos, pos + 8);
-                  String plainBlock = DES.Decrypt(bitBlock, rawKey);
-
+              for (int j = 0; j + 8 <= cipherBits.length(); j += 8) {
+                  String bitBlock = cipherBits.substring(j, j + 8);
+                  String plainBlock = SDES.Decrypt(bitBlock, rawKey);
                   decryptedBits.append(plainBlock);
               }
 
@@ -74,25 +70,24 @@ public class BruteForce{
               int validLength = casciiBits.length - (casciiBits.length % 5);
               byte[] trimmedBits = Arrays.copyOf(casciiBits, validLength);
               try {
-                  plaintext = CASCII.toString(trimmedBits); // should produce UPPERCASE output per CASCII
+                  plaintext = CASCII.toString(trimmedBits); 
               } catch (Exception e) {
                   plaintext = "<invalid-cascii>";
               }
 
-              // preview (trim to keep file reasonable)
               int previewLen = 200;
               String preview = plaintext.length() <= previewLen ? plaintext : plaintext.substring(0, previewLen);
-              // sanitize
               String safePreview = preview.replace("\t", " ").replace("\r", " ").replace("\n", " ");
 
-              // write all attempts
               allWriter.write(rawKey + "\t" + safePreview + "\n");
 
-              // check uppercase keywords in plaintext
               String upPlain = plaintext.toUpperCase();
               boolean matched = false;
-              for (String kw : commonWords) {
-                  if (upPlain.contains(kw)) { matched = true; break; }
+              for (String cw : commonWords) {
+                if (upPlain.contains(cw)) { 
+                    matched = true; 
+                    break; 
+                }
               }
 
               if (matched) {
