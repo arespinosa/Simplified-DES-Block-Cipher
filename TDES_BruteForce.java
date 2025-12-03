@@ -70,18 +70,16 @@ public class TDES_BruteForce {
                 // convert to CASCII plaintext
                 byte[] casciiBits = convBytes(decryptedBits.toString());
                 String plaintext;
-                int validLength = casciiBits.length - (casciiBits.length % 5);
-                byte[] trimmedBits = Arrays.copyOf(casciiBits, validLength);
+
                 try {
-                  plaintext = CASCII.toString(trimmedBits); 
+                  plaintext = CASCII.toString(casciiBits); 
                 } catch (Exception e) {
                   plaintext = "<invalid-cascii>";
                 }
                 
                 int previewLen = 200;
                 String preview = plaintext.length() <= previewLen ? plaintext : plaintext.substring(0, previewLen);
-                String safePreview = preview.replace("\t", " ").replace("\r", " ").replace("\n", " ");
-                allWriter.write("rawKey: 1 " +  rawKey1 + "\t" + "rawKey: 2 " + rawKey2 + "\t" + "Decrypted Message" + safePreview + "\n");
+                allWriter.write("rawKey: 1 " +  rawKey1 + "\t" + "rawKey: 2 " + rawKey2 + "\t" + "Decrypted Message" + preview + "\n");
 
                 String upPlain = plaintext.toUpperCase();
                 boolean matched = false;
@@ -94,7 +92,7 @@ public class TDES_BruteForce {
                 
                 if (matched) {
                   String safeFull = plaintext.replace("\t", " ").replace("\r", " ").replace("\n", " ");
-                  specialWriter.write("RawKey1: " + rawKey1 + "\tRawKey2: " + rawKey2 + "\t" + safeFull + System.lineSeparator());
+                  specialWriter.write("RawKey1: " + rawKey1 + "\tRawKey2: " + rawKey2 + "\t" + plaintext + "\n");
                 }
             }
             allWriter.flush();
