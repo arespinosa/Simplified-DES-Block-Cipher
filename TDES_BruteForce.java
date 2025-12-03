@@ -73,7 +73,7 @@ public class TDES_BruteForce {
                 int validLength = casciiBits.length - (casciiBits.length % 5);
                 byte[] trimmedBits = Arrays.copyOf(casciiBits, validLength);
                 try {
-                  plaintext = CASCII.toString(trimmedBits); // should produce UPPERCASE output per CASCII
+                  plaintext = CASCII.toString(trimmedBits); 
                 } catch (Exception e) {
                   plaintext = "<invalid-cascii>";
                 }
